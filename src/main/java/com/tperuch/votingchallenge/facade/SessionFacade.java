@@ -1,10 +1,12 @@
 package com.tperuch.votingchallenge.facade;
 
 import com.tperuch.votingchallenge.controller.session.enums.VoteEnum;
+import com.tperuch.votingchallenge.controller.session.enums.VotingResultEnum;
 import com.tperuch.votingchallenge.controller.session.request.SessionRequest;
 import com.tperuch.votingchallenge.controller.session.request.VoteRequest;
 import com.tperuch.votingchallenge.controller.session.response.SessionResponse;
 import com.tperuch.votingchallenge.controller.session.response.VoteResponse;
+import com.tperuch.votingchallenge.controller.session.response.VotingResponse;
 import com.tperuch.votingchallenge.entity.SessionEntity;
 import com.tperuch.votingchallenge.entity.VoteEntity;
 import com.tperuch.votingchallenge.service.SessionService;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Component
 public class SessionFacade {
@@ -49,6 +53,56 @@ public class SessionFacade {
                     + " já votou na sessão de ID " + sessionEntity.getId()
                     + ", só é permitido um voto por associado para cada sessão");
 
+    }
+
+    public VotingResponse countVotesAndGetSessionVotingResult(Long sessionId){
+        SessionEntity sessionEntity = sessionService.findVotingSessionById(sessionId);
+        return buildVotingResponse(sessionEntity);
+    }
+
+    private VotingResponse buildVotingResponse(SessionEntity sessionEntity) {
+        Integer votesForNo = getVotesQuantity(sessionEntity.getVotesForNo());
+        Integer votesForYes = getVotesQuantity(sessionEntity.getVotesForYes());
+        VotingResultEnum votingResultEnum = getVotingResult(sessionEntity.getVotingEnd(), votesForNo, votesForYes);
+
+        VotingResponse votingResponse = new VotingResponse();
+        votingResponse.setSessionId(sessionEntity.getId());
+        votingResponse.setTopicId(sessionEntity.getTopicId());
+        votingResponse.setVotesForNo(votesForNo);
+        votingResponse.setVotesForYes(votesForYes);
+        votingResponse.setResult(votingResultEnum);
+        return votingResponse;
+    }
+
+    private VotingResultEnum getResult(Integer votesForYes, Integer votesForNo) {
+        int comparison = Integer.compare(votesForYes, votesForNo);
+        switch (comparison){
+            case 0 :
+                return VotingResultEnum.EMPATE;
+            case 1 :
+                return VotingResultEnum.APROVADA;
+            default:
+                return VotingResultEnum.REJEITADA;
+        }
+    }
+
+    private VotingResultEnum getVotingResult(LocalDateTime votingEnd, Integer noVotes, Integer yesVotes) {
+        if(Objects.isNull(votingEnd)) {
+            throw new EntityNotFoundException("Não foi aberta votação para essa pauta");
+        }
+        if(isVotingSessionClosed(votingEnd)){
+            return getResult(yesVotes, noVotes);
+        } else {
+            return VotingResultEnum.EM_ABERTO;
+        }
+    }
+
+    private boolean isVotingSessionClosed(LocalDateTime votingEnd) {
+        return votingEnd.isBefore(LocalDateTime.now());
+    }
+
+    private Integer getVotesQuantity(Integer votesQuantity) {
+        return Objects.nonNull(votesQuantity) ? votesQuantity : 0 ;
     }
 
     private VoteResponse mapToResponse(VoteEntity voteEntity) {

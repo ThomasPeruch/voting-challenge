@@ -28,4 +28,9 @@ public class SessionController {
     public ResponseEntity<VoteResponse> vote(@Valid @RequestBody VoteRequest voteRequest){
         return new ResponseEntity(sessionFacade.vote(voteRequest), HttpStatus.CREATED);
     }
+
+    @GetMapping(value = "/count-votes/{sessionId}")
+    public ResponseEntity<VoteResponse> countVotesAndGetSessionVotingResult(@PathVariable Long sessionId){
+        return new ResponseEntity(sessionFacade.countVotesAndGetSessionVotingResult(sessionId), HttpStatus.OK);
+    }
 }
