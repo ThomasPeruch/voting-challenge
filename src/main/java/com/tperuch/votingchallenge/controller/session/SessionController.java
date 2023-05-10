@@ -1,7 +1,9 @@
 package com.tperuch.votingchallenge.controller.session;
 
 import com.tperuch.votingchallenge.controller.session.request.SessionRequest;
+import com.tperuch.votingchallenge.controller.session.request.VoteRequest;
 import com.tperuch.votingchallenge.controller.session.response.SessionResponse;
+import com.tperuch.votingchallenge.controller.session.response.VoteResponse;
 import com.tperuch.votingchallenge.facade.SessionFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,5 +22,10 @@ public class SessionController {
     @PostMapping(value = "/{topicId}")
     public ResponseEntity<SessionResponse> openVotingSession(@PathVariable Long topicId, @Valid @RequestBody SessionRequest sessionRequest) {
         return new ResponseEntity(sessionFacade.openVotingSession(topicId, sessionRequest), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/vote")
+    public ResponseEntity<VoteResponse> vote(@Valid @RequestBody VoteRequest voteRequest){
+        return new ResponseEntity(sessionFacade.vote(voteRequest), HttpStatus.CREATED);
     }
 }
