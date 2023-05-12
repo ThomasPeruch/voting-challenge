@@ -19,11 +19,25 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.postgresql:postgresql'
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.1'
-	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-	testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.7'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+task codeCoverageReport(type: JacocoReport) {
+	executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+	subprojects.each {
+		sourceSets it.sourceSets.main
+	}
+
+	reports {
+		xml.enabled true
+		html.enabled true
+		csv.enabled false
+	}
 }

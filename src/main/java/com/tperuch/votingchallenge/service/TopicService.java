@@ -17,7 +17,7 @@ public class TopicService {
         return topicRepository.save(topicEntity);
     }
 
-    public TopicEntity findByid(Long id){
+    public TopicEntity findById(Long id){
         return topicRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Não foi encontrado nenhuma pauta com o id informado " + id));
     }

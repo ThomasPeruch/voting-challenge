@@ -19,10 +19,11 @@ import java.util.Objects;
 public class SessionService {
 
     Logger logger = LoggerFactory.getLogger(SessionService.class);
+
     @Autowired
     private SessionRepository sessionRepository;
 
-    public SessionEntity saveVotingSession(Long topicId, LocalDateTime votingEndDate) {
+    public SessionEntity createVotingSession(Long topicId, LocalDateTime votingEndDate) {
         checkIfTopicIsAlreadyInVoting(topicId);
         LocalDateTime votingEnd = getVotingEndDate(votingEndDate);
         return sessionRepository.save(buildOpeningVotingSession(topicId, votingEnd));
@@ -42,10 +43,6 @@ public class SessionService {
         }
     }
 
-    private SessionEntity buildOpeningVotingSession(Long topicId, LocalDateTime votingEndDate) {
-        return new SessionEntity(topicId, LocalDateTime.now(), votingEndDate);
-    }
-
     private LocalDateTime getVotingEndDate(LocalDateTime votingEndRequest) {
         LocalDateTime endingVote;
         if (Objects.isNull(votingEndRequest)) {
@@ -54,6 +51,10 @@ public class SessionService {
             endingVote = votingEndRequest;
         }
         return checkVotingEndDate(endingVote);
+    }
+
+    private SessionEntity buildOpeningVotingSession(Long topicId, LocalDateTime votingEndDate) {
+        return new SessionEntity(topicId, LocalDateTime.now(), votingEndDate);
     }
 
     private LocalDateTime checkVotingEndDate(LocalDateTime votingEnd) {
@@ -74,12 +75,12 @@ public class SessionService {
         sessionRepository.save(sessionToUpdate);
     }
 
-    private Integer getVotesQuantity(Integer voteQuantity) {
-        return Objects.isNull(voteQuantity) ? 0 : voteQuantity;
-    }
-
     private VoteEnum isVoteValid(VoteEnum voteValue) {
         return VoteEnum.valueOf(voteValue.name());
+    }
+
+    private Integer getVotesQuantity(Integer voteQuantity) {
+        return Objects.isNull(voteQuantity) ? 0 : voteQuantity;
     }
 
     public boolean isSessionClosedForVoting(SessionEntity sessionEntity){

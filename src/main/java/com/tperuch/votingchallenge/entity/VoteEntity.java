@@ -53,4 +53,12 @@ public class VoteEntity {
     public void setSessionId(Long sessionId) {
         this.sessionId = sessionId;
     }
+
+    public Boolean getVoteValue() {
+        return voteValue;
+    }
+
+    public void setVoteValue(Boolean voteValue) {
+        this.voteValue = voteValue;
+    }
 }

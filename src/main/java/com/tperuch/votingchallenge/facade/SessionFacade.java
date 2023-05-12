@@ -36,7 +36,7 @@ public class SessionFacade {
         if (!topicService.existsById(topicId)) {
             throw new EntityNotFoundException("Não foi encontrado nenhuma pauta com o id informado - ID: " + topicId);
         }
-        return modelMapper.map(sessionService.saveVotingSession(topicId, sessionRequest.getVotingEnd()), SessionResponse.class);
+        return modelMapper.map(sessionService.createVotingSession(topicId, sessionRequest.getVotingEnd()), SessionResponse.class);
     }
 
     public VoteResponse vote(VoteRequest voteRequest){
@@ -87,9 +87,6 @@ public class SessionFacade {
     }
 
     private VotingResultEnum getVotingResult(LocalDateTime votingEnd, Integer noVotes, Integer yesVotes) {
-        if(Objects.isNull(votingEnd)) {
-            throw new EntityNotFoundException("Não foi aberta votação para essa pauta");
-        }
         if(isVotingSessionClosed(votingEnd)){
             return getResult(yesVotes, noVotes);
         } else {

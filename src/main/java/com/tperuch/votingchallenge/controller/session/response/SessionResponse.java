@@ -3,6 +3,7 @@ package com.tperuch.votingchallenge.controller.session.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class SessionResponse {
 
@@ -49,5 +50,18 @@ public class SessionResponse {
 
     public void setVotingEnd(LocalDateTime votingEnd) {
         this.votingEnd = votingEnd;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SessionResponse that = (SessionResponse) o;
+        return Objects.equals(id, that.id) && Objects.equals(topicId, that.topicId) && Objects.equals(votingStart, that.votingStart) && Objects.equals(votingEnd, that.votingEnd);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, topicId, votingStart, votingEnd);
     }
 }
