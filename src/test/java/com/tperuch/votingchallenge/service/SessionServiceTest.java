@@ -3,6 +3,7 @@ package com.tperuch.votingchallenge.service;
 import com.tperuch.votingchallenge.controller.session.enums.VoteEnum;
 import com.tperuch.votingchallenge.controller.session.request.VoteRequest;
 import com.tperuch.votingchallenge.entity.SessionEntity;
+import com.tperuch.votingchallenge.exception.InvalidDateException;
 import com.tperuch.votingchallenge.repository.SessionRepository;
 import com.tperuch.votingchallenge.stub.SessionEntityStub;
 import com.tperuch.votingchallenge.stub.VoteRequestStub;
@@ -89,8 +90,8 @@ class SessionServiceTest {
 
         when(sessionRepository.findByTopicId(1L)).thenReturn(null);
 
-        DateTimeException exception = assertThrows(
-                DateTimeException.class, () -> sessionService.createVotingSession(1L, endVoteDate));
+        InvalidDateException exception = assertThrows(
+                InvalidDateException.class, () -> sessionService.createVotingSession(1L, endVoteDate));
 
         verify(sessionRepository, times(1)).findByTopicId(1L);
         verify(sessionRepository, never()).save(any());

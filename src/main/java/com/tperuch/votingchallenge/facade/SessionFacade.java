@@ -9,6 +9,8 @@ import com.tperuch.votingchallenge.controller.session.response.VoteResponse;
 import com.tperuch.votingchallenge.controller.session.response.VotingResponse;
 import com.tperuch.votingchallenge.entity.SessionEntity;
 import com.tperuch.votingchallenge.entity.VoteEntity;
+import com.tperuch.votingchallenge.exception.AssociateAlreadyVotedException;
+import com.tperuch.votingchallenge.exception.SessionClosedException;
 import com.tperuch.votingchallenge.service.SessionService;
 import com.tperuch.votingchallenge.service.TopicService;
 import com.tperuch.votingchallenge.service.VoteService;
@@ -42,14 +44,15 @@ public class SessionFacade {
     public VoteResponse vote(VoteRequest voteRequest){
         SessionEntity sessionEntity = sessionService.findVotingSessionById(voteRequest.getSessionVotingId());
         if(sessionService.isSessionClosedForVoting(sessionEntity)){
-            throw new RuntimeException("A sessão escolhida ja teve sua votação encerrada");
+            throw new SessionClosedException("A sessão escolhida ja teve sua votação encerrada");
         }
         if(associateHasNotVotedYet(voteRequest.getAssociateId(), sessionEntity.getId())) {
             sessionService.updateVoting(sessionEntity, voteRequest);
             VoteEntity voteEntity = voteService.saveVote(sessionEntity.getId(), voteRequest);
             return mapToResponse(voteEntity);
         }
-        throw new RuntimeException("O Associado de ID " + voteRequest.getAssociateId()
+        throw new AssociateAlreadyVotedException(
+                    "O Associado de ID " + voteRequest.getAssociateId()
                     + " já votou na sessão de ID " + sessionEntity.getId()
                     + ", só é permitido um voto por associado para cada sessão");
 

@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @ControllerAdvice
@@ -15,6 +16,7 @@ public class CustomerExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessage> methodArgumentNotValidException(MethodArgumentNotValidException exception) {
         return new ResponseEntity<>(new ErrorMessage(
+                exception.getClass(),
                 HttpStatus.BAD_REQUEST.value(),
                 List.of("O(s) campo(s) inserido(s) no request não deve(m) ser vazio(s)")),
                 HttpStatus.BAD_REQUEST);
@@ -23,7 +25,23 @@ public class CustomerExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorMessage> httpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return new ResponseEntity<>(
-                new ErrorMessage(HttpStatus.BAD_REQUEST.value(),List.of("O Json de request não pode ser nulo/vazio")),
+                new ErrorMessage(exception.getClass(), HttpStatus.BAD_REQUEST.value(), List.of(exception.getLocalizedMessage())),
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMessage> entityNotFoundException(EntityNotFoundException exception) {
+        return new ResponseEntity<>(
+                new ErrorMessage(exception.getClass(), HttpStatus.NOT_FOUND.value(), List.of(exception.getMessage())),
+                HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorMessage> runtimeException(RuntimeException exception) {
+        return new ResponseEntity<>(
+                new ErrorMessage(exception.getClass(), HttpStatus.NOT_FOUND.value(), List.of(exception.getMessage())),
+                HttpStatus.NOT_FOUND);
+    }
+
 }

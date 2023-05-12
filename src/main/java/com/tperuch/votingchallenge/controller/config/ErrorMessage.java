@@ -9,10 +9,12 @@ public class ErrorMessage {
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime time;
+    private Class exceptionClass;
     private int httpStatus;
     private List<String> errors;
 
-    public ErrorMessage(int httpStatus, List<String> errors) {
+    public ErrorMessage(Class exceptionClass, int httpStatus, List<String> errors) {
+        this.exceptionClass = exceptionClass;
         this.time = LocalDateTime.now();
         this.httpStatus = httpStatus;
         this.errors = errors;
@@ -35,5 +37,13 @@ public class ErrorMessage {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
+    }
+
+    public Class getExceptionClass() {
+        return exceptionClass;
+    }
+
+    public void setExceptionClass(Class exceptionClass) {
+        this.exceptionClass = exceptionClass;
     }
 }

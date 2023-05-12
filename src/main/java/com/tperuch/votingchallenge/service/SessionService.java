@@ -3,6 +3,8 @@ package com.tperuch.votingchallenge.service;
 import com.tperuch.votingchallenge.controller.session.enums.VoteEnum;
 import com.tperuch.votingchallenge.controller.session.request.VoteRequest;
 import com.tperuch.votingchallenge.entity.SessionEntity;
+import com.tperuch.votingchallenge.exception.InvalidDateException;
+import com.tperuch.votingchallenge.exception.TopicAlreadyInVotingException;
 import com.tperuch.votingchallenge.repository.SessionRepository;
 import java.lang.Integer;
 import org.slf4j.Logger;
@@ -39,7 +41,7 @@ public class SessionService {
         if (Objects.isNull(sessionEntity)) {
             logger.info("A pauta esta disponivel para votação - ID da pauta: {}", topicId);
         } else if (Objects.nonNull(sessionEntity.getVotingStart()) && Objects.nonNull(sessionEntity.getVotingEnd())) {
-            throw new RuntimeException("Outra sessão de votação já foi iniciada com essa pauta de ID " + topicId + ", tente iniciar uma sessão com outra pauta");
+            throw new TopicAlreadyInVotingException("Outra sessão de votação já foi iniciada com essa pauta de ID " + topicId + ", tente iniciar uma sessão com outra pauta");
         }
     }
 
@@ -59,7 +61,7 @@ public class SessionService {
 
     private LocalDateTime checkVotingEndDate(LocalDateTime votingEnd) {
         if (votingEnd.isBefore(LocalDateTime.now())) {
-            throw new DateTimeException("A data final deve ser posterior à data inicial da votação");
+            throw new InvalidDateException("A data final deve ser posterior à data inicial da votação");
         }
         return votingEnd;
     }
