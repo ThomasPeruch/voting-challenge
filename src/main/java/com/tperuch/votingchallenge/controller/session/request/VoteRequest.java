@@ -1,18 +1,22 @@
 package com.tperuch.votingchallenge.controller.session.request;
 
 import com.tperuch.votingchallenge.controller.session.enums.VoteEnum;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class VoteRequest {
 
+    @ApiModelProperty(value = "Id da sessão de votação")
     @NotNull
     private Long sessionVotingId;
 
+    @ApiModelProperty(value = "Id do associado que ira votar")
     @NotNull
     private Long associateId;
 
+    @ApiModelProperty(value = "Voto do associado")
     @NotNull
     private VoteEnum voteValue;
 

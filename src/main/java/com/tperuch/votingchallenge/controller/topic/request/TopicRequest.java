@@ -1,10 +1,13 @@
 package com.tperuch.votingchallenge.controller.topic.request;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 public class TopicRequest {
 
+    @ApiModelProperty(value = "Descrição/proposta da pauta")
     @NotBlank(message = "A descrição da pauta é obrigatória")
     private String description;
 

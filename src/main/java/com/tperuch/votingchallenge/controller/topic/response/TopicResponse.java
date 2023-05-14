@@ -1,8 +1,13 @@
 package com.tperuch.votingchallenge.controller.topic.response;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class TopicResponse {
 
+    @ApiModelProperty(value = "Id da pauta")
     private Long id;
+
+    @ApiModelProperty(value = "Descrição/proposta da pauta")
     private String description;
 
     public TopicResponse() {

@@ -1,4 +1,4 @@
-package com.tperuch.votingchallenge.controller.config;
+package com.tperuch.votingchallenge.controller.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class CustomerExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessage> methodArgumentNotValidException(MethodArgumentNotValidException exception) {
         return new ResponseEntity<>(new ErrorMessage(
-                exception.getClass(),
+                exception.getClass().getName(),
                 HttpStatus.BAD_REQUEST.value(),
                 List.of("O(s) campo(s) inserido(s) no request não deve(m) ser vazio(s)")),
                 HttpStatus.BAD_REQUEST);
@@ -25,14 +25,14 @@ public class CustomerExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorMessage> httpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return new ResponseEntity<>(
-                new ErrorMessage(exception.getClass(), HttpStatus.BAD_REQUEST.value(), List.of(exception.getLocalizedMessage())),
+                new ErrorMessage(exception.getClass().getName(), HttpStatus.BAD_REQUEST.value(), List.of(exception.getLocalizedMessage())),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorMessage> entityNotFoundException(EntityNotFoundException exception) {
         return new ResponseEntity<>(
-                new ErrorMessage(exception.getClass(), HttpStatus.NOT_FOUND.value(), List.of(exception.getMessage())),
+                new ErrorMessage(exception.getClass().getName(), HttpStatus.NOT_FOUND.value(), List.of(exception.getMessage())),
                 HttpStatus.NOT_FOUND);
     }
 
@@ -40,7 +40,7 @@ public class CustomerExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorMessage> runtimeException(RuntimeException exception) {
         return new ResponseEntity<>(
-                new ErrorMessage(exception.getClass(), HttpStatus.NOT_FOUND.value(), List.of(exception.getMessage())),
+                new ErrorMessage(exception.getClass().getName(), HttpStatus.NOT_FOUND.value(), List.of(exception.getMessage())),
                 HttpStatus.NOT_FOUND);
     }
 

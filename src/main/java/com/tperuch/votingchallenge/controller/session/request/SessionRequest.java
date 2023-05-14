@@ -1,12 +1,14 @@
 package com.tperuch.votingchallenge.controller.session.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class SessionRequest {
 
+    @ApiModelProperty(value = "Data e hora de encerramento da votação, caso não seja informada a sessão terá 1 minuto de duração")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime votingEnd;
 
