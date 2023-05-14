@@ -1,10 +1,12 @@
 package com.tperuch.votingchallenge.facade;
 
+import com.tperuch.votingchallenge.controller.session.enums.SessionStatusEnum;
 import com.tperuch.votingchallenge.controller.session.enums.VoteEnum;
 import com.tperuch.votingchallenge.controller.session.enums.VotingResultEnum;
 import com.tperuch.votingchallenge.controller.session.request.SessionRequest;
 import com.tperuch.votingchallenge.controller.session.request.VoteRequest;
 import com.tperuch.votingchallenge.controller.session.response.SessionResponse;
+import com.tperuch.votingchallenge.controller.session.response.SessionStatusResponse;
 import com.tperuch.votingchallenge.controller.session.response.VoteResponse;
 import com.tperuch.votingchallenge.controller.session.response.VotingResponse;
 import com.tperuch.votingchallenge.entity.SessionEntity;
@@ -20,7 +22,9 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class SessionFacade {
@@ -62,6 +66,33 @@ public class SessionFacade {
         SessionEntity sessionEntity = sessionService.findVotingSessionById(sessionId);
         return buildVotingResponse(sessionEntity);
     }
+
+    public List<SessionStatusResponse> findAllVotingSessions(){
+        List<SessionEntity> sessionEntity = sessionService.findAllVotingSessions();
+        if(Objects.isNull(sessionEntity) || sessionEntity.isEmpty()){
+            throw new EntityNotFoundException("Não existe nenhuma sessão de votação cadastrada");
+        }
+        return buildSessionStatusResponse(sessionEntity);
+    }
+
+    private List<SessionStatusResponse> buildSessionStatusResponse(List<SessionEntity> sessions) {
+        return sessions.stream().map(this::mapToSessionStatusResponse).collect(Collectors.toList());
+    }
+
+    private SessionStatusResponse mapToSessionStatusResponse(SessionEntity sessionEntity) {
+        SessionStatusResponse sessionStatusResponse = new SessionStatusResponse();
+        sessionStatusResponse.setId(sessionEntity.getId());
+        sessionStatusResponse.setTopicId(sessionEntity.getTopicId());
+        sessionStatusResponse.setStatus(getSessionStatus(sessionEntity.getVotingEnd()));
+        return sessionStatusResponse;
+    }
+
+    private SessionStatusEnum getSessionStatus(LocalDateTime votingEnd) {
+        if(Objects.isNull(votingEnd)) return SessionStatusEnum.NAO_INICIADA;
+        if(votingEnd.isAfter(LocalDateTime.now())) return SessionStatusEnum.ABERTA;
+        return SessionStatusEnum.ENCERRADA;
+    }
+
 
     private VotingResponse buildVotingResponse(SessionEntity sessionEntity) {
         Integer votesForNo = getVotesQuantity(sessionEntity.getVotesForNo());

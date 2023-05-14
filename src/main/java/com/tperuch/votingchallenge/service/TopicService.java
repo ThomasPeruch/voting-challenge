@@ -6,12 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @Service
 public class TopicService {
 
     @Autowired
     private TopicRepository topicRepository;
+
+    public List<TopicEntity> findAllTopics() {
+        return topicRepository.findAll();
+    }
 
     public TopicEntity createTopic(TopicEntity topicEntity) {
         return topicRepository.save(topicEntity);

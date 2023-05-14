@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -33,5 +30,15 @@ public class TopicController {
     })
     public ResponseEntity<TopicResponse> createTopic(@Valid @RequestBody TopicRequest topicRequest) {
         return new ResponseEntity(topicFacade.createTopic(topicRequest), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    @ApiOperation(value = "Busca todas as pautas para votação", produces = "application/json", code = 200)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pauta criado com sucesso", response = TopicResponse.class),
+            @ApiResponse(code = 404, message = "Recurso não encontrado", response = ErrorMessage.class)
+    })
+    public ResponseEntity<TopicResponse> findAllTopics() {
+        return new ResponseEntity(topicFacade.findAllTopics(), HttpStatus.OK);
     }
 }

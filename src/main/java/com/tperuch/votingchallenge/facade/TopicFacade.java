@@ -8,6 +8,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 @Component
 public class TopicFacade {
 
@@ -20,5 +25,14 @@ public class TopicFacade {
     public TopicResponse createTopic(TopicRequest topicRequest) {
         TopicEntity topicEntity = topicService.createTopic(modelMapper.map(topicRequest, TopicEntity.class));
         return modelMapper.map(topicEntity, TopicResponse.class);
+    }
+
+    public List<TopicResponse> findAllTopics() {
+        List<TopicEntity> topicEntities = topicService.findAllTopics();
+        if(Objects.isNull(topicEntities) || topicEntities.isEmpty()){
+            throw new EntityNotFoundException("Não existe nenhuma pauta cadastrada");
+        }
+        return topicEntities.stream()
+                .map(entity -> modelMapper.map(entity, TopicResponse.class)).collect(Collectors.toList());
     }
 }

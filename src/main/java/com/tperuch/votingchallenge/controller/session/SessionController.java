@@ -4,6 +4,7 @@ import com.tperuch.votingchallenge.controller.handler.ErrorMessage;
 import com.tperuch.votingchallenge.controller.session.request.SessionRequest;
 import com.tperuch.votingchallenge.controller.session.request.VoteRequest;
 import com.tperuch.votingchallenge.controller.session.response.SessionResponse;
+import com.tperuch.votingchallenge.controller.session.response.SessionStatusResponse;
 import com.tperuch.votingchallenge.controller.session.response.VoteResponse;
 import com.tperuch.votingchallenge.controller.topic.response.TopicResponse;
 import com.tperuch.votingchallenge.facade.SessionFacade;
@@ -23,6 +24,16 @@ public class SessionController {
 
     @Autowired
     private SessionFacade sessionFacade;
+
+    @GetMapping()
+    @ApiOperation(value = "Busca todas as sessões de voto", produces = "application/json")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = SessionStatusResponse.class),
+            @ApiResponse(code = 404, message = "Recurso não encontrado", response = ErrorMessage.class)
+    })
+    public ResponseEntity<SessionStatusResponse> getAllVotingSessions(){
+        return new ResponseEntity(sessionFacade.findAllVotingSessions(), HttpStatus.OK);
+    }
 
     @PostMapping(value = "/{topicId}")
     @ApiOperation(value = "Abre uma sessão de votação para uma pauta", produces = "application/json", code = 201)

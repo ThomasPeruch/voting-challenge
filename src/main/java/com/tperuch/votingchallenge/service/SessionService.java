@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -36,6 +37,9 @@ public class SessionService {
                 .orElseThrow(() -> new EntityNotFoundException("Não foi encontrado nenhuma sessão de votaçao para o id informado - ID: " + id));
     }
 
+    public List<SessionEntity> findAllVotingSessions() {
+        return sessionRepository.findAll();
+    }
     private void checkIfTopicIsAlreadyInVoting(Long topicId) {
         SessionEntity sessionEntity = sessionRepository.findByTopicId(topicId);
         if (Objects.isNull(sessionEntity)) {
