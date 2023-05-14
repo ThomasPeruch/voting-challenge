@@ -11,7 +11,3 @@ Essa solução deve ser executada na nuvem e promover as seguintes funcionalidad
 Para fins de exercício, a segurança das interfaces pode ser abstraída e qualquer chamada para as interfaces pode ser considerada como autorizada. A solução deve ser construída em java, usando Spring-boot, mas os frameworks e bibliotecas são de livre escolha (desde que não infrinja direitos de uso).
 
 É importante que as pautas e os votos sejam persistidos e que não sejam perdidos com o restart da aplicação.
-
-O foco dessa avaliação é a comunicação entre o backend e o aplicativo mobile. 
-Essa comunicação é feita através de mensagens no formato JSON, onde essas mensagens serão interpretadas pelo cliente para montar as telas onde o usuário vai interagir com o sistema. 
-A aplicação cliente não faz parte da avaliação, apenas os componentes do servidor. 
