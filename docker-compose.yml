@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   db:
-    image: bf700010ce28
+    image: postgres
     environment:
       POSTGRES_PASSWORD: "passdb"
       POSTGRES_DB: "postgres"
