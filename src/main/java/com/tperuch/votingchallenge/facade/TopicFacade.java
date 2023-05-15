@@ -5,6 +5,8 @@ import com.tperuch.votingchallenge.controller.topic.response.TopicResponse;
 import com.tperuch.votingchallenge.entity.TopicEntity;
 import com.tperuch.votingchallenge.service.TopicService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,8 @@ public class TopicFacade {
     @Autowired
     private ModelMapper modelMapper;
 
+    Logger logger = LoggerFactory.getLogger(TopicFacade.class);
+
     public TopicResponse createTopic(TopicRequest topicRequest) {
         TopicEntity topicEntity = topicService.createTopic(modelMapper.map(topicRequest, TopicEntity.class));
         return modelMapper.map(topicEntity, TopicResponse.class);
@@ -30,6 +34,7 @@ public class TopicFacade {
     public List<TopicResponse> findAllTopics() {
         List<TopicEntity> topicEntities = topicService.findAllTopics();
         if(Objects.isNull(topicEntities) || topicEntities.isEmpty()){
+            logger.error("Não existe nenhuma pauta cadastrada");
             throw new EntityNotFoundException("Não existe nenhuma pauta cadastrada");
         }
         return topicEntities.stream()

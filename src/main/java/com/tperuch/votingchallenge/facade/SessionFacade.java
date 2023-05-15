@@ -17,6 +17,8 @@ import com.tperuch.votingchallenge.service.SessionService;
 import com.tperuch.votingchallenge.service.TopicService;
 import com.tperuch.votingchallenge.service.VoteService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,23 +40,31 @@ public class SessionFacade {
     @Autowired
     private ModelMapper modelMapper;
 
+    Logger logger = LoggerFactory.getLogger(SessionFacade.class);
+
     public SessionResponse openVotingSession(Long topicId, SessionRequest sessionRequest) {
         if (!topicService.existsById(topicId)) {
+            logger.error("Não foi encontrado nenhuma pauta com o id informado - ID: {}",topicId);
             throw new EntityNotFoundException("Não foi encontrado nenhuma pauta com o id informado - ID: " + topicId);
         }
         return modelMapper.map(sessionService.createVotingSession(topicId, sessionRequest.getVotingEnd()), SessionResponse.class);
     }
 
     public VoteResponse vote(VoteRequest voteRequest){
+        logger.info("Registrando voto na sessão de ID {}", voteRequest.getSessionVotingId());
         SessionEntity sessionEntity = sessionService.findVotingSessionById(voteRequest.getSessionVotingId());
         if(sessionService.isSessionClosedForVoting(sessionEntity)){
+            logger.error("A sessão escolhida ja teve sua votação encerrada");
             throw new SessionClosedException("A sessão escolhida ja teve sua votação encerrada");
         }
         if(associateHasNotVotedYet(voteRequest.getAssociateId(), sessionEntity.getId())) {
+            logger.info("O associado de ID {} está apto a votar nessa sessão", voteRequest.getAssociateId());
             sessionService.updateVoting(sessionEntity, voteRequest);
             VoteEntity voteEntity = voteService.saveVote(sessionEntity.getId(), voteRequest);
             return mapToResponse(voteEntity);
         }
+        logger.error("O Associado de ID {} já votou na sessão de ID {}, só é permitido um voto por associado para cada sessão",
+                voteRequest.getAssociateId(), sessionEntity.getId());
         throw new AssociateAlreadyVotedException(
                     "O Associado de ID " + voteRequest.getAssociateId()
                     + " já votou na sessão de ID " + sessionEntity.getId()
@@ -63,6 +73,7 @@ public class SessionFacade {
     }
 
     public VotingResponse countVotesAndGetSessionVotingResult(Long sessionId){
+        logger.info("Buscando votos e resultado da sessão de ID {}", sessionId);
         SessionEntity sessionEntity = sessionService.findVotingSessionById(sessionId);
         return buildVotingResponse(sessionEntity);
     }
@@ -70,6 +81,7 @@ public class SessionFacade {
     public List<SessionStatusResponse> findAllVotingSessions(){
         List<SessionEntity> sessionEntity = sessionService.findAllVotingSessions();
         if(Objects.isNull(sessionEntity) || sessionEntity.isEmpty()){
+            logger.error("Não existe nenhuma sessão de votação cadastrada");
             throw new EntityNotFoundException("Não existe nenhuma sessão de votação cadastrada");
         }
         return buildSessionStatusResponse(sessionEntity);

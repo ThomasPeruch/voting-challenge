@@ -6,7 +6,6 @@ import com.tperuch.votingchallenge.controller.session.request.VoteRequest;
 import com.tperuch.votingchallenge.controller.session.response.SessionResponse;
 import com.tperuch.votingchallenge.controller.session.response.SessionStatusResponse;
 import com.tperuch.votingchallenge.controller.session.response.VoteResponse;
-import com.tperuch.votingchallenge.controller.topic.response.TopicResponse;
 import com.tperuch.votingchallenge.facade.SessionFacade;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -31,7 +30,7 @@ public class SessionController {
             @ApiResponse(code = 200, message = "", response = SessionStatusResponse.class),
             @ApiResponse(code = 404, message = "Recurso não encontrado", response = ErrorMessage.class)
     })
-    public ResponseEntity<SessionStatusResponse> getAllVotingSessions(){
+    public ResponseEntity<SessionStatusResponse> getAllVotingSessions() {
         return new ResponseEntity(sessionFacade.findAllVotingSessions(), HttpStatus.OK);
     }
 
@@ -53,7 +52,7 @@ public class SessionController {
             @ApiResponse(code = 400, message = "Dados informados são inválidos", response = ErrorMessage.class),
             @ApiResponse(code = 404, message = "Recurso não encontrado", response = ErrorMessage.class)
     })
-    public ResponseEntity<VoteResponse> vote(@Valid @RequestBody VoteRequest voteRequest){
+    public ResponseEntity<VoteResponse> vote(@Valid @RequestBody VoteRequest voteRequest) {
         return new ResponseEntity(sessionFacade.vote(voteRequest), HttpStatus.CREATED);
     }
 
@@ -64,7 +63,7 @@ public class SessionController {
             @ApiResponse(code = 400, message = "Dados informados são inválidos", response = ErrorMessage.class),
             @ApiResponse(code = 404, message = "Recurso não encontrado", response = ErrorMessage.class)
     })
-    public ResponseEntity<VoteResponse> countVotesAndGetSessionVotingResult(@PathVariable Long sessionId){
+    public ResponseEntity<VoteResponse> countVotesAndGetSessionVotingResult(@PathVariable Long sessionId) {
         return new ResponseEntity(sessionFacade.countVotesAndGetSessionVotingResult(sessionId), HttpStatus.OK);
     }
 }
